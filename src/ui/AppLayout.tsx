@@ -156,16 +156,20 @@ export default function AppLayout() {
               <span className="hidden xs:inline">{t("common.support")}</span>
             </NavLink>
             {/* Install button for PWA */}
-            {deferredPrompt && !isInstalled && (
-              <button
-                onClick={handleInstallClick}
-                className="chip inline-flex items-center gap-1 text-xs sm:text-sm hover:scale-105 transition-transform"
-                aria-label="Install PWA"
-              >
-                <Icon name="download" className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden xs:inline">نصب اپ</span>
-              </button>
-            )}
+            <button
+              onClick={handleInstallClick}
+              disabled={!deferredPrompt || isInstalled}
+              className={`chip inline-flex items-center gap-1 text-xs sm:text-sm transition-transform ${
+                deferredPrompt && !isInstalled
+                  ? "hover:scale-105 cursor-pointer text-white"
+                  : "opacity-50 cursor-not-allowed text-slate-500"
+              }`}
+              aria-label="Install PWA"
+              title={isInstalled ? "اپ نصب شده است" : "نصب برنامه"}
+            >
+              <Icon name="download" className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">نصب اپ</span>
+            </button>
             {state.auth.isLoggedIn ? (
               <NavLink
                 to="/profile"
