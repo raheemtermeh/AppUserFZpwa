@@ -37,7 +37,7 @@ function TabLink({
 
 export default function AppLayout() {
   const { t, isRTL } = useLanguage();
-  const { state } = useStore();
+  const { state, dispatch } = useStore();
   const cartItems = useCart();
   const cartCount = cartItems.length;
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -65,6 +65,21 @@ export default function AppLayout() {
       window.removeEventListener("appinstalled", appInstalledHandler);
     };
   }, []);
+
+  // Show install notification when deferredPrompt is available
+  useEffect(() => {
+    if (deferredPrompt && !isInstalled) {
+      // Dispatch notification to show install prompt
+      dispatch({
+        type: "show_notification",
+        message:
+          t("common.installAppPrompt") || "اپ را برای تجربه بهتر نصب کنید",
+        notificationType: "info",
+        actionLabel: t("common.install") || "نصب",
+        onAction: handleInstallClick,
+      });
+    }
+  }, [deferredPrompt, isInstalled, dispatch, t]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;

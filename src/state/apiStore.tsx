@@ -42,6 +42,8 @@ type State = {
     message: string | null
     type: 'info' | 'warning' | 'error' | 'success' | null
     show: boolean
+    actionLabel?: string
+    onAction?: () => void
   }
   loading: {
     events: boolean
@@ -93,7 +95,7 @@ type Action =
   | { type: 'set_error'; key: keyof State['error']; value: string | null }
   | { type: 'set_redirect_url'; url: string | null }
   | { type: 'expire_pending_reservation'; reservationId: string }
-  | { type: 'show_notification'; message: string; notificationType: 'info' | 'warning' | 'error' | 'success' }
+  | { type: 'show_notification'; message: string; notificationType: 'info' | 'warning' | 'error' | 'success'; actionLabel?: string; onAction?: () => void }
   | { type: 'hide_notification' }
   | { type: 'cleanup_stale_reservations' }
 
@@ -112,7 +114,9 @@ const initialState: State = {
   notification: {
     message: null,
     type: null,
-    show: false
+    show: false,
+    actionLabel: undefined,
+    onAction: undefined
   },
   loading: {
     events: false,
@@ -334,7 +338,9 @@ function reducer(state: State, action: Action): State {
         notification: {
           message: action.message,
           type: action.notificationType,
-          show: true
+          show: true,
+          actionLabel: action.actionLabel,
+          onAction: action.onAction
         }
       }
     case 'hide_notification':
@@ -343,7 +349,9 @@ function reducer(state: State, action: Action): State {
         notification: { 
           message: null, 
           type: null, 
-          show: false 
+          show: false,
+          actionLabel: undefined,
+          onAction: undefined
         } 
       }
     case 'cleanup_stale_reservations':

@@ -46,6 +46,13 @@ export default function Notification() {
     }
   }
 
+  const handleAction = () => {
+    if (notification.onAction && typeof notification.onAction === 'function') {
+      notification.onAction()
+    }
+    dispatch({ type: 'hide_notification' })
+  }
+
   return (
     <div className="fixed top-4 right-4 z-50 max-w-sm">
       <div className={`p-4 rounded-lg border backdrop-blur-sm ${getNotificationStyles()}`}>
@@ -54,12 +61,22 @@ export default function Notification() {
           <div className="flex-1">
             <p className="text-sm font-medium">{notification.message}</p>
           </div>
-          <button
-            onClick={() => dispatch({ type: 'hide_notification' })}
-            className="flex-shrink-0 p-1 hover:bg-white/10 rounded transition-colors"
-          >
-            <Icon name="close" className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {notification.actionLabel && notification.onAction && (
+              <button
+                onClick={handleAction}
+                className="flex-shrink-0 px-3 py-1 text-xs font-semibold bg-white/20 hover:bg-white/30 rounded transition-colors"
+              >
+                {notification.actionLabel}
+              </button>
+            )}
+            <button
+              onClick={() => dispatch({ type: 'hide_notification' })}
+              className="flex-shrink-0 p-1 hover:bg-white/10 rounded transition-colors"
+            >
+              <Icon name="close" className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
